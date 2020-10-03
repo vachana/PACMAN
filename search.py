@@ -75,9 +75,6 @@ def tinyMazeSearch(problem):
 
 
 def depthFirstSearch(problem):
-    x = problem.goal
-    y = problem.getStartState()
-    print("goal state ", x, y, problem.isGoalState(problem.getStartState()))
     """
     Search the deepest nodes in the search tree first.
 
@@ -92,39 +89,106 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    Stack = util.Stack()
+    VisitedCells = []
+    StartCell = problem.getStartState()
+    StartPair = (StartCell, [])
+    Stack.push(StartPair)
+    while not Stack.isEmpty():
+        CurrentPair = Stack.pop()
+        CurrentCell = CurrentPair[0]
+        DirectionsToCell = CurrentPair[1]
+    if problem.isGoalState(CurrentCell):
+        print(DirectionsToCell)
+        return DirectionsToCell
+    else:
+        if CurrentCell not in VisitedCells:
+            VisitedCells.append(CurrentCell)
+            SuccessorList = problem.getSuccessors(CurrentCell)
+            for Triplet in SuccessorList:
+                Stack.push((Triplet[0], DirectionsToCell + [Triplet[1]]))
 
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
+    # Initialize the queue using the already-built in util.py package.
     Queue = util.Queue()
-   # DirectionsToCell = []
-    visitedCells = []
-    startCell = problem.getStartState()
-    startPair = (startCell, [])
-    Queue.push(startPair)
+    # Initialize the set of Visited Cells, which we use to keep track of which cells we've visited.
+    VisitedCells = []
+    # Get the Starting Cell, using the command that is already built into the project.
+    StartCell = problem.getStartState()
+    # Initialize the Starting Pair, which could be something like ([3,2], []). In other words, the
+    # start cell is [3,2] and the second entry is [] since we don't have to do anything to get to [3,2].
+    StartPair = (StartCell, [])
+    Queue.push(StartPair)
     while not Queue.isEmpty():
         CurrentPair = Queue.pop()
         CurrentCell = CurrentPair[0]
-        # print("CC ",CurrentCell)
-       # DirectionsToCell.append(CurrentPair[1])
-        DirectionsTo = CurrentPair[1]
+        DirectionsToCell = CurrentPair[1]
         if problem.isGoalState(CurrentCell):
-            print("Booh ", DirectionsTo)
-            return DirectionsTo
-        elif CurrentCell not in visitedCells:
-            visitedCells.append(CurrentCell)
-            SuccessorList = problem.getSuccessors(CurrentCell)
-            for i in range(len(SuccessorList)):
-                if (not problem.walls[SuccessorList[i][0][0]][SuccessorList[i][0][1]]):
-                    Queue.push(SuccessorList[i])
+            print(DirectionsToCell)
+            return DirectionsToCell
+        else:
+            if CurrentCell not in VisitedCells:
+                VisitedCells.append(CurrentCell)
+                SuccessorList = problem.getSuccessors(CurrentCell)
+                for Triplet in SuccessorList:
+                       Queue.push((Triplet[0], DirectionsToCell + [Triplet[1]]))
+# def breadthFirstSearch(problem):
+#     """Search the shallowest nodes in the search tree first."""
+#     "*** YOUR CODE HERE ***"
+#     Queue = util.Queue()
+#     DirectionsTo = []
+#     visitedCells = []
+#     startCell = problem.getStartState()
+#     startPair = (startCell, [])
+#     Queue.push(startPair)
+#     while not Queue.isEmpty():
+#         CurrentPair = Queue.pop()
+#         CurrentCell = CurrentPair[0]
+#         # print("CC ",CurrentCell)
+#        # DirectionsToCell.append(CurrentPair[1])
+#         DirectionsTo += CurrentPair[1]
+#         if problem.isGoalState(CurrentCell):
+#             print("Booh ", DirectionsTo)
+#             return DirectionsTo
+#         elif CurrentCell not in visitedCells:
+#             visitedCells.append(CurrentCell)
+#             SuccessorList = problem.getSuccessors(CurrentCell)
+#             for i in range(len(SuccessorList)):
+#                 if (not problem.walls[SuccessorList[i][0][0]][SuccessorList[i][0][1]]):
+#                     Queue.push(SuccessorList[i])
 
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    """Search the shallowest nodes in the search tree first."""
+    # Initialize the queue using the already-built in util.py package.
+    pQueue = util.PriorityQueue()
+    # Initialize the set of Visited Cells, which we use to keep track of which cells we've visited.
+
+    # Get the Starting Cell, using the command that is already built into the project.
+    StartCell = problem.getStartState()
+    # Initialize the Starting Pair, which could be something like ([3,2], []). In other words, the
+    # start cell is [3,2] and the second entry is [] since we don't have to do anything to get to [3,2].
+    StartPair = (StartCell, [], 0)
+    pQueue.push(StartPair, 0)
+    # VisitedCells = {StartCell}
+    VisitedCells = {StartCell:0}
+    while not pQueue.isEmpty():
+        CurrentPair = pQueue.pop()
+        CurrentCell, DirectionsToCell, costSoFar = CurrentPair
+        if problem.isGoalState(CurrentCell):
+            print(DirectionsToCell)
+            return DirectionsToCell
+
+        SuccessorList = problem.getSuccessors(CurrentCell)
+        for cell, direction, cost in SuccessorList:
+            if cell not in VisitedCells or cost+costSoFar < VisitedCells[cell]:
+                # VisitedCells += (Triplet[0]),
+                VisitedCells [cell] = cost+costSoFar
+                pQueue.push((cell, DirectionsToCell + [direction], cost+costSoFar), cost+costSoFar)
 
 
 def nullHeuristic(state, problem=None):
@@ -136,9 +200,31 @@ def nullHeuristic(state, problem=None):
 
 
 def aStarSearch(problem, heuristic=nullHeuristic):
-    """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    Queue = util.PriorityQueue()
+
+
+# Initialize the set of Visited Cells, which we use to keep track of which cells we've visited.
+    VisitedCells = []
+# Get the Starting Cell, using the command that is already built into the project.
+    StartCell = problem.getStartState()
+# Initialize the Starting Pair, which could be something like ([3,2], []). In other words, the
+# start cell is [3,2] and the second entry is [] since we don't have to do anything to get to [3,2].
+    StartPair = (StartCell, [])
+    Queue.push(StartPair, 0)
+    while not Queue.isEmpty():
+        CurrentPair = Queue.pop()
+        CurrentCell = CurrentPair[0]
+        DirectionsToCell = CurrentPair[1]
+        if problem.isGoalState(CurrentCell):
+            print(DirectionsToCell)
+            return DirectionsToCell
+        else:
+            if CurrentCell not in VisitedCells:
+                VisitedCells.append(CurrentCell)
+            SuccessorList = problem.getSuccessors(CurrentCell)
+            for Triplet in SuccessorList:
+                Queue.push((Triplet[0], DirectionsToCell + [Triplet[1]]),
+                           Triplet[2] + heuristic(Triplet[0], problem))
 
 
 # Abbreviations
