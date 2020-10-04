@@ -89,24 +89,6 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    # Stack = util.Stack()
-    # VisitedCells = []
-    # StartCell = problem.getStartState()
-    # StartPair = (StartCell, [])
-    # Stack.push(StartPair)
-    # while not Stack.isEmpty():
-    #     CurrentPair = Stack.pop()
-    #     CurrentCell = CurrentPair[0]
-    #     DirectionsToCell = CurrentPair[1]
-    #     if problem.isGoalState(CurrentCell):
-    #         print(DirectionsToCell)
-    #     return DirectionsToCell
-    # else:
-    #     if CurrentCell not in VisitedCells:
-    #         VisitedCells.append(CurrentCell)
-    #         SuccessorList = problem.getSuccessors(CurrentCell)
-    #         for Triplet in SuccessorList:
-    #             Stack.push((Triplet[0], DirectionsToCell + [Triplet[1]]))
     # Initialize the set of Visited Cells, which we use to keep track of which cells we've visited.
     stackVal = util.Stack()
     # Get the Starting Cell, using the command that is already built into the project.
@@ -132,31 +114,43 @@ def depthFirstSearch(problem):
                 stackVal.push((cell, DirectionsToCell + [direction]))
 
 
-def breadthFirstSearch(problem):
-    """Search the shallowest nodes in the search tree first."""
-    # Initialize the queue using the already-built in util.py package.
-    Queue = util.Queue()
-    # Initialize the set of Visited Cells, which we use to keep track of which cells we've visited.
-    VisitedCells = []
-    # Get the Starting Cell, using the command that is already built into the project.
-    StartCell = problem.getStartState()
-    # Initialize the Starting Pair, which could be something like ([3,2], []). In other words, the
-    # start cell is [3,2] and the second entry is [] since we don't have to do anything to get to [3,2].
+
+def bfsHelper(StartCell,problem):
+    queueVal = util.Queue()
     StartPair = (StartCell, [])
-    Queue.push(StartPair)
-    while not Queue.isEmpty():
-        CurrentPair = Queue.pop()
-        CurrentCell = CurrentPair[0]
-        DirectionsToCell = CurrentPair[1]
+    queueVal.push(StartPair)
+    VisitedCells = {StartCell}
+    while not queueVal.isEmpty():
+        CurrentPair = queueVal.pop()
+        CurrentCell, DirectionsToCell = CurrentPair
         if problem.isGoalState(CurrentCell):
             print(DirectionsToCell)
             return DirectionsToCell
-        else:
-            if CurrentCell not in VisitedCells:
-                VisitedCells.append(CurrentCell)
-                SuccessorList = problem.getSuccessors(CurrentCell)
-                for Triplet in SuccessorList:
-                    Queue.push((Triplet[0], DirectionsToCell + [Triplet[1]]))
+
+        SuccessorList = problem.getSuccessors(CurrentCell)
+        for cell, direction, _ in SuccessorList:
+            if cell not in VisitedCells:
+                VisitedCells.add(cell)
+                queueVal.push((cell, DirectionsToCell + [direction]))
+def breadthFirstSearch(problem):
+    """Search the shallowest nodes in the search tree first."""
+
+    # Initialize the set of Visited Cells, which we use to keep track of which cells we've visited.
+
+    # Get the Starting Cell, using the command that is already built into the project.
+    StartCell = problem.getStartState()
+
+    if len(StartCell) == 2:
+        StartCell,Food = StartCell
+        directions = bfsHelper(StartCell, problem)
+        while not all(Food.values()):
+            for key,val in Food.items():
+                if not val:
+                    directions += bfsHelper(key,problem)
+        return directions
+    else:
+        return bfsHelper(StartCell, problem)
+
 
 
 def uniformCostSearch(problem):
