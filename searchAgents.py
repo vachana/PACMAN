@@ -296,9 +296,9 @@ class CornersProblem(search.SearchProblem):
             if not startingGameState.hasFood(*corner):
                 print('Warning: no food in corner ' + str(corner))
         self._expanded = 0  # DO NOT CHANGE; Number of search nodes expanded
-        self.cornersReached = [0, 0, 0, 0]
-        self.visited = {corner: False for corner in self.corners}
-        #[self.corners[0], self.corners[1], self.corners[2], self.corners[3]] = [0, 0, 0, 0]
+
+        # self.co = {corner: False for corner in self.corners}
+        self.cornersSet = set(self.corners)
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
@@ -309,37 +309,17 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        return self.startingPosition,self.visited
+        return True,self.startingPosition,self.corners
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        # if all([self.corners[0], self.corners[1], self.corners[2], self.corners[3]]):
-        #     return True
-        #
-        # for i in range(4):
-        #     if state == self.corners[i]:
-        #         sel
-
-        if state in self.visited:
-            self.visited[state] = True
-
-        return all(self.visited.values())
-        # if all(self.cornersReached):
-        #     return True
-        # elif state in self.corners:
-        #     # for i in self.cornersReached:
-        #     #     if self.cornersReached[i] == 0:
-        #     #         self.cornersReached[i] = 1
-        #     for i in range(4):
-        #         if state == self.corners[i]:
-        #             self.cornersReached[i] = 1
-        #             print("state  ",state," reached ",self.cornersReached)
-        #             return False
-        # else:
-        #     return False
+        if state in self.cornersSet:
+            self.cornersSet.remove(state)
+            return True
+        return False
 
     def getSuccessors(self, state):
         """
@@ -363,14 +343,14 @@ class CornersProblem(search.SearchProblem):
 
         self._expanded += 1  # DO NOT CHANGE
         return successors
-
-    # successors = []
-    # for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST,
-    #                Directions.WEST]: x, y = statedx, dy = Actions.directionToVector(action)
+    #
+    # x, y = state[0]
+    # dx, dy = Actions.directionToVector(direction)
     # nextx, nexty = int(x + dx), int(y + dy)
-    # if not self.walls[nextx][nexty]: nextState = (nextx, nexty)
-    # cost = self.costFn(nextState)
-    # successors.append((nextState, action, cost))
+    # if not self.walls[nextx][nexty]:
+    #     nextFood = state[1].copy()
+    #     nextFood[nextx][nexty] = False
+    #     successors.append((((nextx, nexty), nextFood), direction, 1))
 
     def getCostOfActions(self, actions):
         """
@@ -447,6 +427,7 @@ class FoodSearchProblem:
             nextx, nexty = int(x + dx), int(y + dy)
             if not self.walls[nextx][nexty]:
                 nextFood = state[1].copy()
+                print("nextFood",nextFood)
                 nextFood[nextx][nexty] = False
                 successors.append((((nextx, nexty), nextFood), direction, 1))
         return successors

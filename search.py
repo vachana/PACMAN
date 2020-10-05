@@ -125,13 +125,14 @@ def bfsHelper(StartCell,problem):
         CurrentCell, DirectionsToCell = CurrentPair
         if problem.isGoalState(CurrentCell):
             print(DirectionsToCell)
-            return DirectionsToCell
+            return DirectionsToCell,CurrentCell
 
         SuccessorList = problem.getSuccessors(CurrentCell)
         for cell, direction, _ in SuccessorList:
             if cell not in VisitedCells:
                 VisitedCells.add(cell)
                 queueVal.push((cell, DirectionsToCell + [direction]))
+
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
 
@@ -139,18 +140,15 @@ def breadthFirstSearch(problem):
 
     # Get the Starting Cell, using the command that is already built into the project.
     StartCell = problem.getStartState()
-
-    if len(StartCell) == 2:
-        StartCell,Food = StartCell
-        directions = bfsHelper(StartCell, problem)
-        while not all(Food.values()):
-            for key,val in Food.items():
-                if not val:
-                    directions += bfsHelper(key,problem)
-        return directions
+    if len(StartCell) == 3:
+        _,startCell, allCorners = StartCell
+        res, lastCell = bfsHelper(startCell, problem)
+        for _ in range(len(allCorners) - 1):
+            path, lastCell = bfsHelper(lastCell, problem)
+            res += path
+        return res
     else:
-        return bfsHelper(StartCell, problem)
-
+        return bfsHelper(StartCell, problem)[0]
 
 
 def uniformCostSearch(problem):
