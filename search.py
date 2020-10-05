@@ -189,15 +189,8 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
-
-def aStarSearch(problem, heuristic=nullHeuristic):
+def astarHelper(StartCell,problem,heuristic):
     pQueue = util.PriorityQueue()
-    # Initialize the set of Visited Cells, which we use to keep track of which cells we've visited.
-
-    # Get the Starting Cell, using the command that is already built into the project.
-    StartCell = problem.getStartState()
-    # Initialize the Starting Pair, which could be something like ([3,2], []). In other words, the
-    # start cell is [3,2] and the second entry is [] since we don't have to do anything to get to [3,2].
     StartPair = (StartCell, [], 0)
     pQueue.push(StartPair, 0)
 
@@ -207,7 +200,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         CurrentCell, DirectionsToCell, costSoFar = CurrentPair
         if problem.isGoalState(CurrentCell):
             print(DirectionsToCell)
-            return DirectionsToCell
+            return DirectionsToCell,CurrentCell
 
         SuccessorList = problem.getSuccessors(CurrentCell)
         for cell, direction, cost in SuccessorList:
@@ -216,6 +209,25 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 VisitedCells[cell] = cost + costSoFar
                 pQueue.push((cell, DirectionsToCell + [direction], cost + costSoFar),
                             cost + costSoFar + heuristic(cell, problem))
+
+def aStarSearch(problem, heuristic=nullHeuristic):
+
+    # Initialize the set of Visited Cells, which we use to keep track of which cells we've visited.
+    x = 2
+    # Get the Starting Cell, using the command that is already built into the project.
+    StartCell = problem.getStartState()
+    if len(StartCell) == 3:
+        _, startCell, allCorners = StartCell
+        res, lastCell = astarHelper(startCell, problem,heuristic)
+        for _ in range(len(allCorners) - 1):
+            path, lastCell = astarHelper(lastCell, problem,heuristic)
+            res += path
+        return res
+    else:
+        return astarHelper(StartCell, problem,heuristic)[0]
+
+    # Initialize the Starting Pair, which could be something like ([3,2], []). In other words, the
+    # start cell is [3,2] and the second entry is [] since we don't have to do anything to get to [3,2].
 
 
 # Abbreviations

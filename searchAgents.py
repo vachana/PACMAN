@@ -343,14 +343,6 @@ class CornersProblem(search.SearchProblem):
 
         self._expanded += 1  # DO NOT CHANGE
         return successors
-    #
-    # x, y = state[0]
-    # dx, dy = Actions.directionToVector(direction)
-    # nextx, nexty = int(x + dx), int(y + dy)
-    # if not self.walls[nextx][nexty]:
-    #     nextFood = state[1].copy()
-    #     nextFood[nextx][nexty] = False
-    #     successors.append((((nextx, nexty), nextFood), direction, 1))
 
     def getCostOfActions(self, actions):
         """
@@ -379,11 +371,17 @@ def cornersHeuristic(state, problem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
+
     corners = problem.corners  # These are the corner coordinates
-    walls = problem.walls  # These are the walls of the maze, as a Grid (game.py)
+    def manhatten(xy1,xy2):
+        return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
+
+    return min([manhatten(state, i) for i in corners])
+
+        #walls = problem.walls  # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    return 0  # Default to trivial solution
+ # Default to trivial solution
 
 
 class AStarCornersAgent(SearchAgent):
