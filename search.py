@@ -133,12 +133,10 @@ def bfsHelper(StartCell,problem):
                 VisitedCells.add(cell)
                 queueVal.push((cell, DirectionsToCell + [direction]))
 
+
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
 
-    # Initialize the set of Visited Cells, which we use to keep track of which cells we've visited.
-
-    # Get the Starting Cell, using the command that is already built into the project.
     StartCell = problem.getStartState()
     if len(StartCell) == 3:
         _,startCell, allCorners = StartCell

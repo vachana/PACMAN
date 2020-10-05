@@ -331,7 +331,8 @@ class CornersProblem(search.SearchProblem):
             state, 'action' is the action required to get there, and 'stepCost'
             is the incremental cost of expanding to that successor
         """
-
+        if len(state) == 3:
+            _, state, _ = state
         successors = []
         for direction in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             x, y = state
@@ -371,7 +372,8 @@ def cornersHeuristic(state, problem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
-
+    if len(state) == 3:
+        _,state,_ = state
     corners = problem.corners  # These are the corner coordinates
     def manhatten(xy1,xy2):
         return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
